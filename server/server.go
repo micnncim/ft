@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	pb "github.com/micnncim/ft/service"
+	pb "github.com/micnncim/ft/proto"
 )
 
 type fileTransferer struct{}

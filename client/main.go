@@ -8,7 +8,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	pb "github.com/micnncim/ft/service"
+	pb "github.com/micnncim/ft/proto"
 )
 
 const address = "localhost:8080"
