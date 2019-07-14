@@ -14,18 +14,23 @@ import (
 const address = "localhost:8080"
 
 type client struct {
-	cli pb.FileTransfererClient
+	cli  pb.FileTransfererClient
+	conn *grpc.ClientConn
+}
+
+func newClient() (*client, error) {
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		return nil, err
+	}
+	c := &client{
+		cli:  pb.NewFileTransfererClient(conn),
+		conn: conn,
+	}
+	return c, nil
 }
 
 func (c *client) Run(ctx context.Context, cmd, from, to string) error {
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-
-	c.cli = pb.NewFileTransfererClient(conn)
-
 	errCh := make(chan error, 1)
 	switch cmd {
 	case "download":
@@ -109,4 +114,8 @@ func (c *client) upload(ctx context.Context, from, to string) error {
 		return err
 	}
 	return nil
+}
+
+func (c *client) Close() error {
+	return c.conn.Close()
 }

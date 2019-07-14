@@ -37,7 +37,11 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
-	c := &client{}
+	c, err := newClient()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer c.Close()
 	if err := c.Run(ctx, cmd, from, to); err != nil {
 		log.Fatal(err)
 	}
