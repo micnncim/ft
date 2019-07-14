@@ -11,8 +11,6 @@ import (
 	pb "github.com/micnncim/ft/proto"
 )
 
-const address = "localhost:8080"
-
 type client struct {
 	cli  pb.FileTransfererClient
 	conn *grpc.ClientConn

@@ -12,8 +12,6 @@ import (
 	pb "github.com/micnncim/ft/proto"
 )
 
-const port = ":8080"
-
 type fileTransferer struct{}
 
 func (f *fileTransferer) Run(ctx context.Context) error {

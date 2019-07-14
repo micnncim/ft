@@ -10,12 +10,16 @@ import (
 
 var (
 	serverMode bool
+	port       string
+	address    string
 
 	timeout = 10 * time.Second
 )
 
 func init() {
 	flag.BoolVar(&serverMode, "s", false, "run as a server")
+	flag.StringVar(&port, "port", ":8080", "port for server")
+	flag.StringVar(&address, "address", "localhost:8080", "address of server for client")
 	flag.Parse()
 }
 
