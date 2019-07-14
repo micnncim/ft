@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "service";
+option go_package = "proto";
 
 service FileTransferer {
     rpc Download(DownloadRequest) returns (stream DownloadResponse) {};

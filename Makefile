@@ -1,6 +1,6 @@
 .PHONY: proto
 proto:
-	protoc --go_out=plugins=grpc:. service/*.proto
+	protoc --go_out=plugins=grpc:. proto/*.proto
 
 .PHONY: server
 server:
