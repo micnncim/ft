@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option go_package = "service";
+
+service FileTransferer {
+    rpc Download(DownloadRequest) returns (stream DownloadResponse) {};
+    rpc Upload(stream UploadRequest) returns (UploadResponse) {};
+}
+
+message DownloadRequest {
+    string from = 1;
+}
+
+message DownloadResponse {
+    bytes content = 1;
+}
+
+message UploadRequest {
+    string to = 1;
+    bytes content = 3;
+}
+
+message UploadResponse {
+}
