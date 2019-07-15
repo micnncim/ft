@@ -5,6 +5,14 @@ Inspired by [mattn/ft](https://github.com/mattn/ft).
 
 ## Usage
 
+```
+$ ft --help
+Usage of ft:
+  -h string
+        host of server (default "localhost:8080")
+  -s    run as a server
+```
+
 ### Run as Server
 
 ``` 
