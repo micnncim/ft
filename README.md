@@ -3,9 +3,6 @@
 A file transferer with gRPC.
 Inspired by [mattn/ft](https://github.com/mattn/ft).
 
-Currently localhost is only supported.
-So apparently just a copy command for now.
-
 ## Usage
 
 ### Run as Server
@@ -18,7 +15,7 @@ $ ft -s
 
 #### Download
 
-Download from `~/Downloads/gopher.png` to `./gopher.png`.
+Download from `~/Downloads/gopher.png` in server to `./gopher.png` in client.
 
 ``` 
 $ ft download ~/Downloads/gopher.png gopher.png
@@ -26,7 +23,7 @@ $ ft download ~/Downloads/gopher.png gopher.png
 
 #### Upload
 
-Upload from `./gopher.png` to `~/Downloads/gopher.png` 
+Upload from `./gopher.png` in client to `~/Downloads/gopher.png` in server.
 
 ```
 $ ft upload gopher.png ~/Downloads/gopher.png 
