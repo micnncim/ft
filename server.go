@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"log"
 	"net"
 	"os"
 
@@ -12,13 +13,23 @@ import (
 	pb "github.com/micnncim/ft/proto"
 )
 
-type fileTransferer struct{}
+type fileTransferer struct {
+	host string
+}
 
-func (f *fileTransferer) Run(ctx context.Context) error {
+func newFileTransferer(host string) *fileTransferer {
+	return &fileTransferer{
+		host: host,
+	}
+}
+
+func (f *fileTransferer) run(ctx context.Context) error {
+	log.Printf("server: starting on %s", f.host)
+
 	s := grpc.NewServer()
 	pb.RegisterFileTransfererServer(s, f)
 
-	lis, err := net.Listen("tcp", port)
+	lis, err := net.Listen("tcp", f.host)
 	if err != nil {
 		return err
 	}
@@ -37,7 +48,10 @@ func (f *fileTransferer) Run(ctx context.Context) error {
 }
 
 func (f *fileTransferer) Download(req *pb.DownloadRequest, stream pb.FileTransferer_DownloadServer) error {
-	file, err := os.Open(req.From)
+	from := req.From
+	log.Printf("server: sending %s...", from)
+
+	file, err := os.Open(from)
 	if err != nil {
 		return err
 	}
@@ -46,6 +60,7 @@ func (f *fileTransferer) Download(req *pb.DownloadRequest, stream pb.FileTransfe
 	for {
 		n, err := file.Read(buf)
 		if err == io.EOF {
+			log.Printf("server: sent %s", from)
 			return nil
 		}
 		if err != nil {
@@ -65,7 +80,9 @@ func (f *fileTransferer) Upload(stream pb.FileTransferer_UploadServer) error {
 	if err != nil {
 		return err
 	}
-	file, err := os.Create(req.To)
+	to := req.To
+	log.Printf("server: receiving %s...", to)
+	file, err := os.Create(to)
 	if err != nil {
 		return err
 	}
@@ -83,5 +100,6 @@ func (f *fileTransferer) Upload(stream pb.FileTransferer_UploadServer) error {
 		}
 	}
 
+	log.Printf("server: received %s", to)
 	return stream.SendAndClose(&pb.UploadResponse{})
 }

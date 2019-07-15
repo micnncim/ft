@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"log"
 	"os"
 
 	"google.golang.org/grpc"
@@ -16,8 +17,8 @@ type client struct {
 	conn *grpc.ClientConn
 }
 
-func newClient() (*client, error) {
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+func newClient(host string) (*client, error) {
+	conn, err := grpc.Dial(host, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +29,9 @@ func newClient() (*client, error) {
 	return c, nil
 }
 
-func (c *client) Run(ctx context.Context, cmd, from, to string) error {
+func (c *client) run(ctx context.Context, cmd, from, to string) error {
+	log.Printf("client: starting")
+
 	errCh := make(chan error, 1)
 	switch cmd {
 	case "download":
@@ -47,11 +50,13 @@ func (c *client) Run(ctx context.Context, cmd, from, to string) error {
 	case err := <-errCh:
 		return err
 	case <-ctx.Done():
-		return errors.New("client: timeout")
+		return errors.New("client: canceled")
 	}
 }
 
 func (c *client) download(ctx context.Context, from, to string) error {
+	log.Printf("client: downloading %s...", from)
+
 	f, err := os.Create(to)
 	if err != nil {
 		return err
@@ -67,6 +72,7 @@ func (c *client) download(ctx context.Context, from, to string) error {
 		for {
 			resp, err := stream.Recv()
 			if err == io.EOF {
+				log.Printf("client: downloaded %s", to)
 				return nil
 			}
 			if err != nil {
@@ -80,6 +86,8 @@ func (c *client) download(ctx context.Context, from, to string) error {
 }
 
 func (c *client) upload(ctx context.Context, from, to string) error {
+	log.Printf("client: uploading %s...", from)
+
 	f, err := os.Open(from)
 	if err != nil {
 		return err
@@ -111,6 +119,7 @@ func (c *client) upload(ctx context.Context, from, to string) error {
 	if _, err = stream.CloseAndRecv(); err != nil {
 		return err
 	}
+	log.Printf("client: uploaded %s", to)
 	return nil
 }
 
